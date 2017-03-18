@@ -1,0 +1,80 @@
+/**
+ * Created by lsetiawan on 10/3/16.
+ */
+//var web_url = 'http://35.160.91.70:8080/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=himat:indus_weather_stations&outputFormat=text/javascript&format_options=callback:getJson';
+var weather_icon = L.icon({
+    iconUrl: 'http://nvs.nanoos.org/lib/images/icons/assets/shore_station-default.png',
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    popupAnchor:  [-9, -90] // point from which the popup should open relative to the iconAnchor
+});
+
+var river_icon = L.icon({
+    iconUrl: 'http://nvs.nanoos.org/lib/images/icons/assets/river_gauge-default.png',
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    popupAnchor:  [-9, -90] // point from which the popup should open relative to the iconAnchor
+});
+
+var layer_label;
+var layer_group;
+var counter = 0;
+
+
+// var indusBasin = 'IndusBasin.geojson';
+// var regionOne = 'Region1.geojson';
+
+var basemaps = {};
+
+// Initialize basemap
+var mapCenter = [48.00, -121.00];
+var initZoom = 5;
+var accessToken = 'pk.eyJ1IjoibHNldGlhd2FuIiwiYSI6ImNpbjI3M2UzNzBiZzh2OWtrZGlzZ2FhaG8ifQ.tkoR6uJikfFpOq4jfsk02w';
+var mapboxId = 'mapbox.outdoors';
+
+var webMap = new L.map('map').setView(mapCenter, initZoom);
+L.control.scale().addTo(webMap);
+
+var osm = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: mapboxId,
+    accessToken: accessToken
+}).addTo(webMap);
+
+basemaps['OSM'] = osm;
+
+// Create the layercontrol and add it to the map
+var controlLayers = L.control.groupedLayers(basemaps).addTo(webMap);
+
+// var basinStyle = {
+//     color: "#000000",
+//     weight: 1,
+//     fillColor: '#ad9c55',
+//     fillOpacity: .6
+// };
+
+
+// $.getJSON(indusBasin, function (data) {
+//     var dataLayer = L.geoJson(data, {
+//         style: function(feature) {
+//             return basinStyle;
+//         }
+//     });
+//     // Add the geojson layer to the layercontrol
+//     controlLayers.addOverlay(dataLayer, 'Indus Basin', 'Study Regions');
+// });
+//
+// $.getJSON(regionOne, function (data) {
+//     var dataLayer = L.geoJson(data);
+//     // Add the geojson layer to the layercontrol
+//     controlLayers.addOverlay(dataLayer, 'Region1', 'Study Regions');
+// });
+
+var gs_url = 'http://35.164.141.136:8080/geoserver/glacier_peak/wms';
+var lidar_layers = {
+    group:'lidar',
+    layer_data: [{
+        layer: 'glacier_peak:glacier_peak_2015_dtm_7_512_4326',
+        label: 'glacier_peak_2015_dtm_7'
+    }]};
+
+addGSLayer(gs_url,lidar_layers);
